@@ -81,7 +81,7 @@ export function BannerCarousel({ categories }: BannerCarouselProps) {
   const currentBanner = banners[currentIndex];
 
   const BannerContent = () => (
-    <div className="relative w-full aspect-[21/9] md:aspect-[3/1] rounded-2xl overflow-hidden">
+    <div className="relative w-full aspect-[21/9] sm:aspect-[3/1] rounded-2xl overflow-hidden banner-content">
       {/* Category strip overlay removed */}
       <img
         // Use transformed image URL for better quality
@@ -98,14 +98,14 @@ export function BannerCarousel({ categories }: BannerCarouselProps) {
       {(currentBanner.title || currentBanner.subtitle) && (
         <div className="absolute inset-0 flex items-center">
           <div className="container mx-auto px-4">
-            <div className="max-w-lg animate-fade-in">
+            <div className="max-w-lg animate-fade-in banner-content">
               {currentBanner.title && (
-                <h2 className="font-display text-2xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-4">
+                <h2 className="font-display text-lg sm:text-2xl md:text-4xl lg:text-5xl font-bold mb-1 sm:mb-2 md:mb-4 banner-title">
                   <span className="gradient-gold-text">{currentBanner.title}</span>
                 </h2>
               )}
               {currentBanner.subtitle && (
-                <p className="text-sm md:text-lg text-muted-foreground">
+                <p className="text-xs sm:text-sm md:text-lg text-muted-foreground banner-subtitle">
                   {currentBanner.subtitle}
                 </p>
               )}
@@ -119,30 +119,30 @@ export function BannerCarousel({ categories }: BannerCarouselProps) {
         <>
           <button
             onClick={(e) => { e.preventDefault(); prevSlide(); }}
-            className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background transition-colors"
+            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background transition-colors"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
           <button
             onClick={(e) => { e.preventDefault(); nextSlide(); }}
-            className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background transition-colors"
+            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background transition-colors"
           >
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
         </>
       )}
 
       {/* Dots Indicator */}
       {banners.length > 1 && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+        <div className="absolute bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
           {banners.map((_, index) => (
             <button
               key={index}
               onClick={(e) => { e.preventDefault(); setCurrentIndex(index); }}
               className={cn(
-                "w-2 h-2 rounded-full transition-all",
+                "w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-all",
                 index === currentIndex 
-                  ? "bg-primary w-6" 
+                  ? "bg-primary w-4 sm:w-6" 
                   : "bg-primary/30 hover:bg-primary/50"
               )}
             />

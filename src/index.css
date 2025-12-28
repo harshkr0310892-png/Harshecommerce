@@ -1639,6 +1639,206 @@
 }
 
 /* ================================
+   📱 MOBILE RESPONSIVE (max-width: 375px)
+   ================================ */
+
+@media (max-width: 375px) {
+  /* Header adjustments */
+  .header-container {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-top: 0.5rem;
+    padding-bottom: 1rem;
+  }
+  
+  .header-logo-text {
+    font-size: 1.25rem !important;
+  }
+  
+  /* Banner adjustments */
+  .banner-content {
+    max-width: 100% !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  
+  .banner-title {
+    font-size: 1.5rem !important;
+    line-height: 1.3 !important;
+  }
+  
+  .banner-subtitle {
+    font-size: 0.875rem !important;
+  }
+  
+  /* Category strip adjustments */
+  .category-item {
+    min-width: 60px !important;
+  }
+  
+  .category-icon {
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+  }
+  
+  .category-text {
+    font-size: 0.75rem !important;
+  }
+  
+  /* Trust strip adjustments */
+  .trust-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+  
+  .trust-item {
+    padding: 0.75rem !important;
+  }
+  
+  .trust-icon {
+    width: 1.5rem !important;
+    height: 1.5rem !important;
+  }
+  
+  .trust-title {
+    font-size: 0.8rem !important;
+  }
+  
+  .trust-desc {
+    font-size: 0.7rem !important;
+  }
+  
+  /* Section heading adjustments */
+  .section-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.5rem !important;
+  }
+  
+  .section-title {
+    font-size: 1.5rem !important;
+  }
+  
+  .section-subtitle {
+    font-size: 0.75rem !important;
+  }
+  
+  .section-button {
+    width: 100% !important;
+    margin-top: 0.5rem !important;
+  }
+  
+  /* Product grid adjustments */
+  .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.5rem !important;
+  }
+  
+  /* Product card adjustments */
+  .product-card {
+    padding: 0.75rem !important;
+  }
+  
+  .product-image-container {
+    height: 120px !important;
+  }
+  
+  .product-name {
+    font-size: 0.8rem !important;
+    line-height: 1.3 !important;
+  }
+  
+  .product-price {
+    font-size: 0.9rem !important;
+  }
+  
+  .product-original-price {
+    font-size: 0.7rem !important;
+  }
+  
+  /* Button adjustments */
+  .btn {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.8rem !important;
+  }
+  
+  .btn-lg {
+    padding: 0.6rem 1.2rem !important;
+    font-size: 0.85rem !important;
+  }
+  
+  /* CTA section adjustments */
+  .cta-content {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  
+  .cta-title {
+    font-size: 1.5rem !important;
+    line-height: 1.3 !important;
+  }
+  
+  .cta-subtitle {
+    font-size: 0.875rem !important;
+  }
+  
+  .cta-buttons {
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+  }
+  
+  .cta-button {
+    width: 100% !important;
+  }
+  
+  /* Footer adjustments */
+  .footer-grid {
+    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+  }
+  
+  .footer-section {
+    padding-bottom: 1rem !important;
+  }
+  
+  .footer-title {
+    font-size: 1rem !important;
+  }
+  
+  .footer-text {
+    font-size: 0.75rem !important;
+  }
+  
+  /* Input adjustments */
+  .input {
+    padding: 0.5rem !important;
+    font-size: 0.8rem !important;
+  }
+  
+  /* Typography adjustments */
+  h1 { font-size: 1.75rem !important; line-height: 1.2 !important; }
+  h2 { font-size: 1.5rem !important; line-height: 1.2 !important; }
+  h3 { font-size: 1.25rem !important; line-height: 1.3 !important; }
+  h4 { font-size: 1.1rem !important; line-height: 1.3 !important; }
+  h5 { font-size: 1rem !important; line-height: 1.3 !important; }
+  h6 { font-size: 0.9rem !important; line-height: 1.3 !important; }
+  
+  /* Container adjustments */
+  .container {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+  
+  /* Spacing adjustments */
+  .py-12 { padding-top: 1.5rem !important; padding-bottom: 1.5rem !important; }
+  .py-16 { padding-top: 2rem !important; padding-bottom: 2rem !important; }
+  .py-20 { padding-top: 2.5rem !important; padding-bottom: 2.5rem !important; }
+  .pb-8 { padding-bottom: 1rem !important; }
+  .mb-8 { margin-bottom: 1rem !important; }
+  .gap-4 { gap: 0.5rem !important; }
+  .gap-6 { gap: 0.75rem !important; }
+  .gap-8 { gap: 1rem !important; }
+}
+
+/* ================================
    🔄 LEGACY COMPATIBILITY
    ================================ */
 

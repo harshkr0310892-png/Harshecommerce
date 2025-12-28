@@ -82,9 +82,9 @@ export default function Index() {
                 <Link
                   key={cat.id}
                   to={`/products?category=${encodeURIComponent(cat.id)}`}
-                  className="flex flex-col items-center text-center min-w-[80px] md:min-w-[88px] group"
+                  className="flex flex-col items-center text-center min-w-[60px] md:min-w-[88px] group category-item"
                 >
-                  <div className="w-14 h-14 md:w-16 md:h-16 rounded-xl bg-card overflow-hidden shadow-sm border border-border/40 flex items-center justify-center group-hover:shadow-md group-hover:scale-105 transition-all duration-300">
+                  <div className="w-10 h-10 md:w-16 md:h-16 rounded-xl bg-card overflow-hidden shadow-sm border border-border/40 flex items-center justify-center group-hover:shadow-md group-hover:scale-105 transition-all duration-300 category-icon">
                     {cat.image_url ? (
                       <img 
                         src={cat.image_url} 
@@ -93,12 +93,12 @@ export default function Index() {
                         loading="lazy"
                       />
                     ) : (
-                      <div className="text-lg md:text-xl font-semibold text-muted-foreground">
+                      <div className="text-base md:text-xl font-semibold text-muted-foreground">
                         {cat.name?.charAt(0)}
                       </div>
                     )}
                   </div>
-                  <span className="text-xs md:text-sm mt-2 text-muted-foreground group-hover:text-primary transition-colors line-clamp-1">
+                  <span className="text-xs md:text-sm mt-1 text-muted-foreground group-hover:text-primary transition-colors line-clamp-1 category-text">
                     {cat.name}
                   </span>
                 </Link>
@@ -117,7 +117,7 @@ export default function Index() {
 
       {/* Trust Strip */}
       <section className="container mx-auto px-4 pb-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 trust-grid">
           {[
             { icon: Truck, title: 'Fast Delivery', desc: 'Quick shipping' },
             { icon: Shield, title: 'Secure Checkout', desc: 'Protected payments' },
@@ -129,16 +129,16 @@ export default function Index() {
               <div
                 key={it.title}
                 className={cn(
-                  'bg-card rounded-xl border border-border/50 p-4 flex items-center gap-3 animate-fade-in',
+                  'bg-card rounded-xl border border-border/50 p-4 flex items-center gap-3 animate-fade-in trust-item',
                   `stagger-${idx + 1}`
                 )}
               >
-                <div className="w-10 h-10 rounded-lg gradient-gold flex items-center justify-center flex-shrink-0">
-                  <Icon className="w-5 h-5 text-primary-foreground" />
+                <div className="w-6 h-6 md:w-10 md:h-10 rounded-lg gradient-gold flex items-center justify-center flex-shrink-0 trust-icon">
+                  <Icon className="w-4 h-4 md:w-5 md:h-5 text-primary-foreground" />
                 </div>
                 <div className="min-w-0">
-                  <div className="text-sm font-semibold truncate">{it.title}</div>
-                  <div className="text-xs text-muted-foreground truncate">{it.desc}</div>
+                  <div className="text-xs md:text-sm font-semibold truncate trust-title">{it.title}</div>
+                  <div className="text-[0.6rem] md:text-xs text-muted-foreground truncate trust-desc">{it.desc}</div>
                 </div>
               </div>
             );
@@ -148,23 +148,23 @@ export default function Index() {
 
       {/* Special Offers Section */}
       {specialOffers.length > 0 && (
-        <section className="py-12 bg-gradient-to-br from-primary/5 via-accent/5 to-primary/5">
+        <section className="py-6 md:py-12 bg-gradient-to-br from-primary/5 via-accent/5 to-primary/5">
           <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center justify-between mb-8 section-header">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl gradient-gold flex items-center justify-center">
-                  <Flame className="w-6 h-6 text-primary-foreground" />
+                <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl gradient-gold flex items-center justify-center">
+                  <Flame className="w-5 h-5 md:w-6 md:h-6 text-primary-foreground" />
                 </div>
                 <div>
-                  <h2 className="font-display text-3xl md:text-4xl font-bold">
+                  <h2 className="font-display text-xl md:text-4xl font-bold section-title">
                     <span className="gradient-gold-text">Special Offers</span>
                   </h2>
-                  <p className="text-muted-foreground text-sm mt-1">
+                  <p className="text-muted-foreground text-xs md:text-sm mt-1 section-subtitle">
                     Limited time deals you don't want to miss
                   </p>
                 </div>
               </div>
-              <Link to="/products">
+              <Link to="/products" className="section-button">
                 <Button variant="royalOutline" size="lg">
                   View All Offers
                   <TrendingUp className="w-4 h-4 ml-2" />
@@ -173,7 +173,7 @@ export default function Index() {
             </div>
 
             {productsLoading ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 gap-2 md:gap-4">
                 {[...Array(4)].map((_, i) => (
                   <div key={i} className="space-y-3">
                     <Skeleton className="aspect-square rounded-lg" />
@@ -183,7 +183,7 @@ export default function Index() {
                 ))}
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 gap-2 md:gap-4 product-grid">
                 {specialOffers.map((product, index) => (
                   <ProductCard
                     key={product.id}
@@ -206,23 +206,23 @@ export default function Index() {
       )}
 
       {/* Featured Products Section */}
-      <section className="py-16 bg-card/30">
+      <section className="py-8 md:py-16 bg-card/30">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between mb-8 section-header">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl gradient-gold flex items-center justify-center">
-                <Crown className="w-6 h-6 text-primary-foreground" />
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl gradient-gold flex items-center justify-center">
+                <Crown className="w-5 h-5 md:w-6 md:h-6 text-primary-foreground" />
               </div>
               <div>
-                <h2 className="font-display text-3xl md:text-4xl font-bold">
+                <h2 className="font-display text-xl md:text-4xl font-bold section-title">
                   <span className="gradient-gold-text">{featuredProductsSection?.title || 'Featured'}</span> Products
                 </h2>
-                <p className="text-muted-foreground text-sm mt-1">
+                <p className="text-muted-foreground text-xs md:text-sm mt-1 section-subtitle">
                   {featuredProductsSection?.subtitle || 'Handpicked treasures from our collection'}
                 </p>
               </div>
             </div>
-            <Link to="/products">
+            <Link to="/products" className="section-button">
               <Button variant="royalOutline" size="lg">
                 View All Products
                 <TrendingUp className="w-4 h-4 ml-2" />
@@ -231,7 +231,7 @@ export default function Index() {
           </div>
 
           {productsLoading ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 gap-2 md:gap-4">
               {[...Array(4)].map((_, i) => (
                 <div key={i} className="space-y-3">
                   <Skeleton className="aspect-square rounded-lg" />
@@ -241,7 +241,7 @@ export default function Index() {
               ))}
             </div>
           ) : featuredProducts && featuredProducts.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 gap-2 md:gap-4 product-grid">
               {featuredProducts.map((product, index) => (
                 <ProductCard
                   key={product.id}
@@ -259,9 +259,9 @@ export default function Index() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-16 bg-card rounded-xl border border-border/50">
-              <Crown className="w-16 h-16 text-primary/30 mx-auto mb-4" />
-              <h3 className="font-display text-xl font-semibold text-muted-foreground mb-2">
+            <div className="text-center py-8 md:py-16 bg-card rounded-xl border border-border/50">
+              <Crown className="w-12 h-12 md:w-16 md:h-16 text-primary/30 mx-auto mb-4" />
+              <h3 className="font-display text-lg md:text-xl font-semibold text-muted-foreground mb-2">
                 No products yet
               </h3>
               <p className="text-muted-foreground text-sm">
@@ -274,29 +274,29 @@ export default function Index() {
 
       {/* CTA Section */}
       {ctaSection && (
-        <section className="py-20 bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10">
+        <section className="py-8 md:py-20 bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10">
           <div className="container mx-auto px-4 text-center">
-            <div className="max-w-3xl mx-auto">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6">
-                <Sparkles className="w-4 h-4 text-primary" />
-                <span className="text-sm text-primary font-medium">Premium Collection</span>
+            <div className="max-w-3xl mx-auto cta-content">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-primary/10 border border-primary/20 mb-4">
+                <Sparkles className="w-3 h-3 md:w-4 md:h-4 text-primary" />
+                <span className="text-xs md:text-sm text-primary font-medium">Premium Collection</span>
               </div>
-              <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+              <h2 className="font-display text-xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-4 cta-title">
                 <span className="gradient-gold-text">{ctaSection.title || 'Discover Royal Elegance'}</span>
               </h2>
               {ctaSection.subtitle && (
-                <p className="text-muted-foreground mb-8 text-lg">
+                <p className="text-muted-foreground mb-4 md:mb-8 text-base md:text-lg cta-subtitle">
                   {ctaSection.subtitle}
                 </p>
               )}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link to={(ctaSection.content as any)?.buttonLink || '/products'}>
+              <div className="flex flex-col sm:flex-row gap-2 md:gap-4 justify-center cta-buttons">
+                <Link to={(ctaSection.content as any)?.buttonLink || '/products'} className="cta-button">
                   <Button variant="royal" size="lg" className="w-full sm:w-auto">
                     <Crown className="w-4 h-4 mr-2" />
                     {(ctaSection.content as any)?.buttonText || 'Shop Now'}
                   </Button>
                 </Link>
-                <Link to="/track-order">
+                <Link to="/track-order" className="cta-button">
                   <Button variant="royalOutline" size="lg" className="w-full sm:w-auto">
                     Track Order
                   </Button>

@@ -176,8 +176,8 @@ export function ProductCard({
   };
 
   return (
-    <div className="group relative bg-card rounded-lg border border-border/80 overflow-hidden hover:shadow-lg transition-all duration-300 animate-fade-in" style={{ animationDelay: `${index * 50}ms` }}>
-      <div className="relative aspect-square lg:aspect-[5/4] lg:h-[295px] overflow-hidden">
+    <div className="group relative bg-card rounded-lg border border-border/80 overflow-hidden hover:shadow-lg transition-all duration-300 animate-fade-in product-card" style={{ animationDelay: `${index * 50}ms` }}>
+      <div className="relative aspect-square sm:aspect-[5/4] sm:h-[200px] md:h-[250px] lg:h-[295px] overflow-hidden">
         {displayImage ? (
           <img 
             src={displayImage} 
@@ -191,19 +191,19 @@ export function ProductCard({
         )}
 
         {/* Badges */}
-        <div className="absolute top-2 left-2 flex flex-col gap-1 z-10">
+        <div className="absolute top-1 left-1 sm:top-2 sm:left-2 flex flex-col gap-1 z-10">
           {discount_percentage > 0 && (
-            <span className="px-2 py-1 rounded-full text-xs font-bold gradient-gold text-white shadow-md">
+            <span className="px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-[0.6rem] sm:text-xs font-bold gradient-gold text-white shadow-md">
               -{discount_percentage}%
             </span>
           )}
           {isSoldOut && (
-            <span className="px-2 py-1 rounded-full text-xs font-bold bg-destructive text-destructive-foreground shadow-md">
+            <span className="px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-[0.6rem] sm:text-xs font-bold bg-destructive text-destructive-foreground shadow-md">
               Sold Out
             </span>
           )}
           {isLowStock && !isSoldOut && (
-            <span className="px-2 py-1 rounded-full text-xs font-bold bg-amber-500 text-white shadow-md">
+            <span className="px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-[0.6rem] sm:text-xs font-bold bg-amber-500 text-white shadow-md">
               Low Stock
             </span>
           )}
@@ -211,77 +211,77 @@ export function ProductCard({
 
         {/* Quick Actions */}
         <div className={cn(
-          "absolute bottom-2 right-2 flex gap-1 sm:gap-2 flex-wrap justify-end",
+          "absolute bottom-1 right-1 sm:bottom-2 sm:right-2 flex gap-1 flex-wrap justify-end",
           "transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100",
           "transition-all duration-300"
         )}>
           <Link to={`/product/${id}`}>
-            <Button size="icon" variant="secondary" className="rounded-full w-7 h-7 sm:w-9 sm:h-9 bg-background/90 backdrop-blur-sm border border-border/50 hover:bg-background">
-              <Eye className="w-3 h-3 sm:w-4 sm:h-4 text-primary" />
+            <Button size="icon" variant="secondary" className="rounded-full w-6 h-6 sm:w-7 sm:h-7 md:w-9 md:h-9 bg-background/90 backdrop-blur-sm border border-border/50 hover:bg-background">
+              <Eye className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4 text-primary" />
             </Button>
           </Link>
           <Button 
             size="icon" 
             variant="secondary" 
-            className="rounded-full w-7 h-7 sm:w-9 sm:h-9 bg-background/90 backdrop-blur-sm border border-border/50 hover:bg-background"
+            className="rounded-full w-6 h-6 sm:w-7 sm:h-7 md:w-9 md:h-9 bg-background/90 backdrop-blur-sm border border-border/50 hover:bg-background"
             onClick={handleShare}
           >
-            <Share2 className="w-3 h-3 sm:w-4 sm:h-4 text-primary" />
+            <Share2 className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4 text-primary" />
           </Button>
           <Button 
             size="icon" 
             variant="secondary" 
             className={cn(
-              "rounded-full w-7 h-7 sm:w-9 sm:h-9 hover:bg-gradient-to-r hover:from-blue-500/20 hover:to-light-blue-500/20 hover:border-blue-500/50 transition-all duration-300",
+              "rounded-full w-6 h-6 sm:w-7 sm:h-7 md:w-9 md:h-9 hover:bg-gradient-to-r hover:from-blue-500/20 hover:to-light-blue-500/20 hover:border-blue-500/50 transition-all duration-300",
               isWishlisted && "bg-primary text-primary-foreground hover:bg-primary/90"
             )}
             onClick={handleToggleWishlist}
           >
-            <Heart className={cn("w-3 h-3 sm:w-4 sm:h-4", isWishlisted && "fill-current animate-pulse")} />
+            <Heart className={cn("w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4", isWishlisted && "fill-current animate-pulse")} />
           </Button>
           <Button 
             size="icon" 
             variant="royal" 
-            className="rounded-full w-7 h-7 sm:w-9 sm:h-9"
+            className="rounded-full w-6 h-6 sm:w-7 sm:h-7 md:w-9 md:h-9"
             onClick={handleAddToCart}
             disabled={isSoldOut}
           >
-            <ShoppingBag className="w-3 h-3 sm:w-4 sm:h-4" />
+            <ShoppingBag className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4" />
           </Button>
         </div>
       </div>
 
       {/* Content */}
-      <Link to={`/product/${id}`} className="block p-3 lg:p-4">
-        <h3 className="font-display text-sm lg:text-base font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors">
+      <Link to={`/product/${id}`} className="block p-2 sm:p-3 lg:p-4">
+        <h3 className="font-display text-xs sm:text-sm lg:text-base font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors product-name">
           {name}
         </h3>
         
-        <div className="mt-1 flex items-center gap-2">
+        <div className="mt-1 flex items-center gap-1 sm:gap-2">
           {discount_percentage > 0 ? (
             <>
-              <span className="font-display text-base lg:text-lg font-bold text-primary">
+              <span className="font-display text-sm sm:text-base lg:text-lg font-bold text-primary product-price">
                 ₹{discountedPrice.toFixed(2)}
               </span>
-              <span className="text-xs text-muted-foreground line-through">
+              <span className="text-[0.6rem] sm:text-xs text-muted-foreground line-through product-original-price">
                 ₹{price.toFixed(2)}
               </span>
             </>
           ) : (
-            <span className="font-display text-base lg:text-lg font-bold text-primary">
+            <span className="font-display text-sm sm:text-base lg:text-lg font-bold text-primary product-price">
               ₹{price.toFixed(2)}
             </span>
           )}
         </div>
 
         {/* Stock indicator */}
-        <div className="mt-2 flex items-center gap-1">
+        <div className="mt-1 sm:mt-2 flex items-center gap-1">
           <div className={cn(
-            "w-2 h-2 rounded-full",
+            "w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full",
             isSoldOut ? "bg-destructive" : isLowStock ? "bg-yellow-500" : "bg-green-500"
           )} />
           <span className={cn(
-            "text-xs",
+            "text-[0.6rem] sm:text-xs",
             isSoldOut ? "text-destructive" : isLowStock ? "text-yellow-600 dark:text-yellow-400" : "text-green-600 dark:text-green-400"
           )}>
             {getStockDisplay()}
