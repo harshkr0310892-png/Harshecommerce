@@ -12,7 +12,9 @@ import {
   Edit2, 
   Trash2, 
   Loader2, 
-  RefreshCw 
+  RefreshCw,
+  Copy,
+  Check
 } from "lucide-react";
 import { 
   Dialog,
@@ -44,6 +46,34 @@ interface DeliveryBoyForm {
   confirm_password: string;
   is_active: boolean;
 }
+
+const CopyLinkButton = ({ deliveryBoyId }: { deliveryBoyId: string }) => {
+  const [copied, setCopied] = useState(false);
+  
+  const copyLink = async () => {
+    try {
+      const link = `${window.location.origin}/order?id=${deliveryBoyId}`;
+      await navigator.clipboard.writeText(link);
+      setCopied(true);
+      toast.success("Login link copied to clipboard!");
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy link: ", err);
+      toast.error("Failed to copy link");
+    }
+  };
+
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={copyLink}
+      title="Copy login link"
+    >
+      {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+    </Button>
+  );
+};
 
 export const DeliveryBoysManager = () => {
   const [deliveryBoys, setDeliveryBoys] = useState<DeliveryBoy[]>([]);
@@ -402,6 +432,7 @@ export const DeliveryBoysManager = () => {
                 >
                   <Edit2 className="w-4 h-4" />
                 </Button>
+                <CopyLinkButton deliveryBoyId={deliveryBoy.id} />
                 <Button
                   variant="ghost"
                   size="icon"

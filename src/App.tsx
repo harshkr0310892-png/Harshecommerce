@@ -19,6 +19,7 @@ import Wishlist from "./pages/Wishlist";
 import NotFound from "./pages/NotFound";
 import DeliveryBoyLogin from "./pages/DeliveryBoyLogin";
 import DeliveryBoyDashboard from "./pages/DeliveryBoyDashboard";
+import AutoLoginDeliveryBoy from "./pages/AutoLoginDeliveryBoy";
 
 const queryClient = new QueryClient();
 
@@ -44,7 +45,7 @@ const App = () => (
           <Route path="/admin/cms" element={<AdminCMS />} />
           <Route path="/delivery-boy/login" element={<DeliveryBoyLogin />} />
           <Route path="/delivery-boy" element={<DeliveryBoyDashboard />} />
-          <Route path="/order" element={<DeliveryBoyLogin />} />
+          <Route path="/order" element={<AutoLoginDeliveryBoy />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
