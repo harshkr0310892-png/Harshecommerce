@@ -801,6 +801,75 @@ export default function Checkout() {
       setOrderId(newOrderId);
       setOrderComplete(true);
       clearCart();
+      
+      // Send order notification to Telegram
+      try {
+        const orderNotification = {
+          id: newOrderId,
+          customer_name: formData.name,
+          customer_email: formData.email || 'N/A',
+          customer_phone: `+91${normalizedPhone}`,
+          items: items.map(item => ({
+            product_name: item.name,
+            variant: item.variant_info ? `${item.variant_info.attribute_name}: ${item.variant_info.attribute_value}` : 'N/A',
+            quantity: item.quantity,
+            price: item.price * (1 - item.discount_percentage / 100),
+          })),
+          total_amount: total,
+          order_date: new Date().toISOString(),
+          shipping_address: `${formData.address}, ${formData.state} - ${formData.pincode}`,
+          status: 'pending',
+        };
+        
+        console.log('Attempting to send order notification:', orderNotification);
+        
+        // Send full order details to Telegram bot
+        let orderDetails = `📦 *NEW ORDER* 📦\n\n`;
+        orderDetails += `*Order ID:* ${orderNotification.id}\n`;
+        orderDetails += `*Customer Name:* ${orderNotification.customer_name}\n`;
+        orderDetails += `*Email:* ${orderNotification.customer_email}\n`;
+        orderDetails += `*Phone:* ${orderNotification.customer_phone}\n`;
+        orderDetails += `*Payment Method:* ${paymentMethod}\n`;
+        orderDetails += `*Shipping Address:* ${orderNotification.shipping_address}\n`;
+        orderDetails += `*Landmark 1:* ${formData.landmark1 || 'N/A'}\n`;
+        orderDetails += `*Landmark 2:* ${formData.landmark2 || 'N/A'}\n`;
+        orderDetails += `*Landmark 3:* ${formData.landmark3 || 'N/A'}\n`;
+        orderDetails += `*State:* ${formData.state}\n`;
+        orderDetails += `*Pin Code:* ${formData.pincode}\n\n`;
+        
+        orderDetails += `*ORDERED ITEMS:*\n`;
+        orderNotification.items.forEach((item, index) => {
+          orderDetails += `${index + 1}. *${item.product_name}*\n`;
+          orderDetails += `   Variant: ${item.variant}\n`;
+          orderDetails += `   Quantity: ${item.quantity}\n`;
+          orderDetails += `   Price: ₹${item.price}\n\n`;
+        });
+        
+        orderDetails += `*Total Amount:* ₹${orderNotification.total_amount}\n`;
+        orderDetails += `*Order Date:* ${new Date(orderNotification.order_date).toLocaleString()}\n`;
+        orderDetails += `*Status:* ${orderNotification.status}\n`;
+        
+        const telegramUrl = `https://api.telegram.org/bot${import.meta.env.VITE_TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${import.meta.env.VITE_TELEGRAM_CHAT_ID}&text=${encodeURIComponent(orderDetails)}&parse_mode=Markdown`;
+        
+        const response = await fetch(telegramUrl);
+        const result = await response.json();
+        
+        console.log('Telegram test result:', result);
+        
+        console.log('Response status:', response.status);
+        
+        if (!response.ok) {
+          console.error('Failed to send Telegram notification:', result);
+          toast.error('Failed to send notification to Telegram');
+        } else {
+          console.log('Telegram notification sent successfully');
+          toast.success('Order notification sent to Telegram!');
+        }
+      } catch (notificationError) {
+        console.error('Error sending Telegram notification:', notificationError);
+        toast.error('Error sending notification to Telegram');
+      }
+      
       toast.success('Order placed successfully!');
     } catch (error) {
       console.error('Error placing order:', error);

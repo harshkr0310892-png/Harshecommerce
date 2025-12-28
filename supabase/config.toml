@@ -1,1 +1,7 @@
 project_id = "ilflxykibxspauiltdvg"
+
+[functions]
+  telegram = { path = "functions/telegram" }
+
+[auth]
+  enable_confirmations = true
