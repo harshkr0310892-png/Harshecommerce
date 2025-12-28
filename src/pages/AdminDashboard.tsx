@@ -103,6 +103,11 @@ interface Order {
   customer_name: string;
   customer_phone: string;
   customer_address: string;
+  customer_state: string | null;
+  customer_pincode: string | null;
+  customer_landmark1: string | null;
+  customer_landmark2: string | null;
+  customer_landmark3: string | null;
   customer_email: string | null;
   status: string;
   payment_method: 'online' | 'cod';
@@ -2313,6 +2318,12 @@ export default function AdminDashboard() {
                         <div>
                           <p className="text-sm text-muted-foreground">Address</p>
                           <p className="text-sm text-black">{order.customer_address}</p>
+                          <p className="text-sm text-black">{order.customer_state}, {order.customer_pincode}</p>
+                          {order.customer_landmark1 && (
+                            <p className="text-sm text-muted-foreground">
+                              Landmarks: {order.customer_landmark1}{order.customer_landmark2 ? `, ${order.customer_landmark2}` : ''}{order.customer_landmark3 ? `, ${order.customer_landmark3}` : ''}
+                            </p>
+                          )}
                         </div>
                       </div>
 
