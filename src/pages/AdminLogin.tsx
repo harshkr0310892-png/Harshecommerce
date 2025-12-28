@@ -1,24 +1,37 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Crown, Lock, User, Loader2 } from "lucide-react";
+import { Crown, Lock, User, Loader2, Mail, Shield } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 // Fixed admin credentials
 const ADMIN_USERNAME = "harsh";
 const ADMIN_PASSWORD = "harsh.kr1025";
+const ADMIN_EMAIL = "lakshsah46@gmail.com";
 
 export default function AdminLogin() {
   const navigate = useNavigate();
+  const [step, setStep] = useState<'credentials' | 'otp'>('credentials');
   const [isLoading, setIsLoading] = useState(false);
   const [credentials, setCredentials] = useState({
     username: '',
     password: '',
   });
-  const [errors, setErrors] = useState<{ username?: string; password?: string }>({});
+  const [otpData, setOtpData] = useState({
+    email: '',
+    otp: '',
+  });
+  const [errors, setErrors] = useState<{ 
+    username?: string; 
+    password?: string;
+    email?: string;
+    otp?: string;
+  }>({});
+  const otpSentRef = useRef(false);
 
   // Check if already logged in via session
   useEffect(() => {
@@ -28,7 +41,60 @@ export default function AdminLogin() {
     }
   }, [navigate]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSendOtp = useCallback(async () => {
+    setErrors({});
+    
+    // Validate email
+    if (!otpData.email || otpData.email.trim() === '') {
+      setErrors({ email: 'Email is required' });
+      return;
+    }
+
+    if (otpData.email !== ADMIN_EMAIL) {
+      setErrors({ email: 'Only authorized admin email is allowed' });
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('hyper-worker', {
+        body: {
+          email: otpData.email,
+          action: 'send'
+        }
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      if (data?.error) {
+        toast.error(data.error);
+        setErrors({ email: data.error });
+        return;
+      }
+
+      toast.success('OTP sent to your email!');
+      otpSentRef.current = true;
+    } catch (error: any) {
+      console.error('Error sending OTP:', error);
+      const errorMessage = error?.message || 'Failed to send OTP. Please try again.';
+      toast.error(errorMessage);
+      setErrors({ email: errorMessage });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [otpData.email]);
+
+  // Reset OTP sent flag when going back to credentials step
+  useEffect(() => {
+    if (step === 'credentials') {
+      otpSentRef.current = false;
+    }
+  }, [step]);
+
+  const handleCredentialsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});
     
@@ -49,14 +115,63 @@ export default function AdminLogin() {
 
     // Check fixed credentials
     if (credentials.username === ADMIN_USERNAME && credentials.password === ADMIN_PASSWORD) {
-      sessionStorage.setItem('admin_logged_in', 'true');
-      toast.success('Welcome back, Admin!');
-      navigate('/admin/dashboard');
+      // Move to OTP step
+      setOtpData({ email: '', otp: '' });
+      setStep('otp');
+      toast.success('Credentials verified. Please enter your email to receive OTP.');
     } else {
       toast.error('Invalid username or password');
     }
 
     setIsLoading(false);
+  };
+
+  const handleOtpSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrors({});
+    
+    if (!otpData.email || otpData.email !== ADMIN_EMAIL) {
+      setErrors({ email: `Only ${ADMIN_EMAIL} is allowed` });
+      return;
+    }
+
+    if (!otpData.otp || otpData.otp.length !== 6) {
+      setErrors({ otp: 'Please enter a valid 6-digit OTP' });
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('hyper-worker', {
+        body: {
+          email: otpData.email,
+          otp: otpData.otp,
+          action: 'verify'
+        }
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      if (data?.error) {
+        toast.error(data.error);
+        setErrors({ otp: data.error });
+        return;
+      }
+
+      if (data?.success) {
+        sessionStorage.setItem('admin_logged_in', 'true');
+        toast.success('Welcome back, Admin!');
+        navigate('/admin/dashboard');
+      }
+    } catch (error: any) {
+      console.error('Error verifying OTP:', error);
+      toast.error(error?.message || 'Failed to verify OTP. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -75,65 +190,194 @@ export default function AdminLogin() {
             </div>
             <h1 className="font-display text-3xl font-bold mb-2">Admin Portal</h1>
             <p className="text-muted-foreground">
-              Sign in to manage your store
+              {step === 'credentials' ? 'Sign in to manage your store' : 'Verify your email to continue'}
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="bg-card rounded-2xl border border-border/50 p-8 royal-shadow">
-            <div className="space-y-5">
-              <div>
-                <Label htmlFor="username">Username</Label>
-                <div className="relative mt-1">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                  <Input
-                    id="username"
-                    type="text"
-                    value={credentials.username}
-                    onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
-                    placeholder="Enter username"
-                    className="pl-11"
-                    autoComplete="username"
-                  />
+          {/* Step 1: Username and Password */}
+          {step === 'credentials' && (
+            <form onSubmit={handleCredentialsSubmit} className="bg-card rounded-2xl border border-border/50 p-8 royal-shadow">
+              <div className="mb-6">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold">1</div>
+                  <span className="text-sm text-muted-foreground">Step 1 of 2</span>
                 </div>
-                {errors.username && <p className="text-sm text-destructive mt-1">{errors.username}</p>}
+                <p className="text-center text-sm text-muted-foreground">Enter your credentials</p>
               </div>
 
-              <div>
-                <Label htmlFor="password">Password</Label>
-                <div className="relative mt-1">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                  <Input
-                    id="password"
-                    type="password"
-                    value={credentials.password}
-                    onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-                    placeholder="Enter password"
-                    className="pl-11"
-                    autoComplete="current-password"
-                  />
+              <div className="space-y-5">
+                <div>
+                  <Label htmlFor="username">Username</Label>
+                  <div className="relative mt-1">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <Input
+                      id="username"
+                      type="text"
+                      value={credentials.username}
+                      onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
+                      placeholder="Enter username"
+                      className="pl-11"
+                      autoComplete="username"
+                    />
+                  </div>
+                  {errors.username && <p className="text-sm text-destructive mt-1">{errors.username}</p>}
                 </div>
-                {errors.password && <p className="text-sm text-destructive mt-1">{errors.password}</p>}
+
+                <div>
+                  <Label htmlFor="password">Password</Label>
+                  <div className="relative mt-1">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <Input
+                      id="password"
+                      type="password"
+                      value={credentials.password}
+                      onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
+                      placeholder="Enter password"
+                      className="pl-11"
+                      autoComplete="current-password"
+                    />
+                  </div>
+                  {errors.password && <p className="text-sm text-destructive mt-1">{errors.password}</p>}
+                </div>
               </div>
-            </div>
 
-            <Button
-              type="submit"
-              variant="royal"
-              size="lg"
-              className="w-full mt-8"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                  Signing in...
-                </>
-              ) : (
-                'Sign In'
-              )}
-            </Button>
+              <Button
+                type="submit"
+                variant="royal"
+                size="lg"
+                className="w-full mt-8"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                    Verifying...
+                  </>
+                ) : (
+                  'Continue'
+                )}
+              </Button>
+            </form>
+          )}
 
-          </form>
+          {/* Step 2: Email and OTP */}
+          {step === 'otp' && (
+            <form onSubmit={handleOtpSubmit} className="bg-card rounded-2xl border border-border/50 p-8 royal-shadow">
+              <div className="mb-6">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold">2</div>
+                  <span className="text-sm text-muted-foreground">Step 2 of 2</span>
+                </div>
+                <p className="text-center text-sm text-muted-foreground">Verify your email with OTP</p>
+              </div>
+
+              <div className="space-y-5">
+                <div>
+                  <Label htmlFor="email">Email</Label>
+                  <div className="relative mt-1">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <Input
+                      id="email"
+                      type="email"
+                      value={otpData.email}
+                      onChange={(e) => setOtpData({ ...otpData, email: e.target.value })}
+                      placeholder="Enter admin email"
+                      className="pl-11"
+                      autoComplete="email"
+                    />
+                  </div>
+                  {errors.email && <p className="text-sm text-destructive mt-1">{errors.email}</p>}
+                </div>
+
+                <div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="lg"
+                    className="w-full"
+                    onClick={handleSendOtp}
+                    disabled={isLoading || !otpData.email}
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Sending OTP...
+                      </>
+                    ) : (
+                      <>
+                        <Mail className="w-4 h-4 mr-2" />
+                        Send OTP
+                      </>
+                    )}
+                  </Button>
+                </div>
+
+                <div>
+                  <Label htmlFor="otp">OTP Code</Label>
+                  <div className="relative mt-1">
+                    <Shield className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <Input
+                      id="otp"
+                      type="text"
+                      value={otpData.otp}
+                      onChange={(e) => setOtpData({ ...otpData, otp: e.target.value.replace(/\D/g, '').slice(0, 6) })}
+                      placeholder="Enter 6-digit OTP"
+                      className="pl-11 text-center text-lg tracking-widest font-mono"
+                      maxLength={6}
+                      autoComplete="off"
+                    />
+                  </div>
+                  {errors.otp && <p className="text-sm text-destructive mt-1">{errors.otp}</p>}
+                  <div className="flex items-center justify-end mt-2">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleSendOtp}
+                      disabled={isLoading || !otpData.email}
+                      className="h-auto py-1 text-xs"
+                    >
+                      {isLoading ? 'Sending...' : 'Resend OTP'}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-3 mt-8">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="lg"
+                  className="flex-1"
+                  onClick={() => {
+                    setStep('credentials');
+                    setOtpData({ email: '', otp: '' });
+                    setErrors({});
+                    otpSentRef.current = false;
+                  }}
+                  disabled={isLoading}
+                >
+                  Back
+                </Button>
+                <Button
+                  type="submit"
+                  variant="royal"
+                  size="lg"
+                  className="flex-1"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                      Verifying...
+                    </>
+                  ) : (
+                    'Verify & Login'
+                  )}
+                </Button>
+              </div>
+            </form>
+          )}
 
           <p className="text-center mt-6 text-muted-foreground text-sm">
             <a href="/" className="hover:text-primary transition-colors">
