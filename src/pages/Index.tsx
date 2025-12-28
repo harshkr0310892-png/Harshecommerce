@@ -76,6 +76,14 @@ export default function Index() {
       {/* Category Strip Above Banner */}
       {categories && categories.length > 0 && (
         <section className="container mx-auto px-4 pt-6 pb-4">
+          <div className="text-center mb-4">
+            <h2 className="font-display text-xl md:text-2xl font-bold text-foreground">
+              Shop with Category
+            </h2>
+            <p className="text-sm md:text-base text-muted-foreground mt-1">
+              Explore products by category
+            </p>
+          </div>
           <div className="overflow-x-auto hide-scrollbar">
             <div className="flex items-center gap-4 md:gap-6 py-3 justify-start md:justify-center">
               {categories.slice(0, 12).map((cat: any) => (
