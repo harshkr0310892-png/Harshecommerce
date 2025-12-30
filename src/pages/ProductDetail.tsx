@@ -11,6 +11,7 @@ import { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { VariantSelector } from "@/components/products/VariantSelector";
+import "@/styles/tabs.css";
 
 interface SelectedVariant {
   id: string;
@@ -35,6 +36,8 @@ export default function ProductDetail() {
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [touchStart, setTouchStart] = useState({ x: 0, y: 0 });
   const [activeTab, setActiveTab] = useState('description');
+  const [isTabAnimating, setIsTabAnimating] = useState(false);
+  const [tabAnimKey, setTabAnimKey] = useState(0);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
   const imageRef = useRef<HTMLDivElement>(null);
@@ -84,6 +87,11 @@ export default function ProductDetail() {
     window.addEventListener('resize', checkScrollPosition);
     return () => window.removeEventListener('resize', checkScrollPosition);
   }, []);
+
+  // Re-trigger animation when tab changes
+  useEffect(() => {
+    setTabAnimKey((k) => k + 1);
+  }, [activeTab]);
 
   const { data: product, isLoading, error } = useQuery({
     queryKey: ['product', id],
@@ -515,6 +523,15 @@ export default function ProductDetail() {
     setTouchStart({ x: 0, y: 0 });
   };
 
+  const handleTabChange = (tab: string) => {
+    if (tab === activeTab) return;
+    setIsTabAnimating(true);
+    setTimeout(() => {
+      setActiveTab(tab);
+      setIsTabAnimating(false);
+    }, 150);
+  };
+
   if (isLoading) {
     return (
       <Layout>
@@ -878,7 +895,7 @@ export default function ProductDetail() {
                             ? "text-primary border-b-2 border-primary" 
                             : "text-muted-foreground hover:text-foreground"
                         )}
-                        onClick={() => setActiveTab('description')}
+                        onClick={() => handleTabChange('description')}
                       >
                         <span className="truncate">Description</span>
                       </button>
@@ -892,7 +909,7 @@ export default function ProductDetail() {
                             ? "text-primary border-b-2 border-primary" 
                             : "text-muted-foreground hover:text-foreground"
                         )}
-                        onClick={() => setActiveTab('features')}
+                        onClick={() => handleTabChange('features')}
                       >
                         <span className="truncate">Features</span>
                       </button>
@@ -906,7 +923,7 @@ export default function ProductDetail() {
                             ? "text-primary border-b-2 border-primary" 
                             : "text-muted-foreground hover:text-foreground"
                         )}
-                        onClick={() => setActiveTab('dimensions')}
+                        onClick={() => handleTabChange('dimensions')}
                       >
                         <span className="truncate">Dimensions</span>
                       </button>
@@ -918,52 +935,52 @@ export default function ProductDetail() {
               </div>
                 
                 <div className="mt-4">
-                  {activeTab === 'description' && product.detailed_description && (
-                    <div>
-                      <p className="text-muted-foreground leading-relaxed">
-                        {product.detailed_description}
-                      </p>
-                    </div>
-                  )}
-                  
-                  {activeTab === 'features' && productFeatures.length > 0 && (
-                    <div>
-                      <ul className="space-y-2">
-                        {productFeatures.map((feature: string, index: number) => (
-                          <li key={index} className="flex items-start gap-2">
-                            <BadgeCheck className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                            <span className="text-muted-foreground">{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                  
-                  {activeTab === 'dimensions' && (height || width || weight) && (
-                    <div className="grid grid-cols-3 gap-4">
-                      {height && (
-                        <div>
-                          <h4 className="font-medium text-foreground mb-1">Height</h4>
-                          <p className="text-muted-foreground">{height}</p>
-                        </div>
-                      )}
-                      {width && (
-                        <div>
-                          <h4 className="font-medium text-foreground mb-1">Width</h4>
-                          <p className="text-muted-foreground">{width}</p>
-                        </div>
-                      )}
-                      {weight && (
-                        <div>
-                          <h4 className="font-medium text-foreground mb-1">Weight</h4>
-                          <p className="text-muted-foreground">{weight}</p>
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  
-                                  </div>
+                  <div className={cn('tab-content', { 'exiting': isTabAnimating })}>
+                    {activeTab === 'description' && product.detailed_description && (
+                      <div>
+                        <p className="text-muted-foreground leading-relaxed">
+                          {product.detailed_description}
+                        </p>
+                      </div>
+                    )}
+                    
+                    {activeTab === 'features' && productFeatures.length > 0 && (
+                      <div>
+                        <ul className="space-y-2">
+                          {productFeatures.map((feature: string, index: number) => (
+                            <li key={index} className="flex items-start gap-2">
+                              <BadgeCheck className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                              <span className="text-muted-foreground">{feature}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    
+                    {activeTab === 'dimensions' && (height || width || weight) && (
+                      <div className="grid grid-cols-3 gap-4">
+                        {height && (
+                          <div>
+                            <h4 className="font-medium text-foreground mb-1">Height</h4>
+                            <p className="text-muted-foreground">{height}</p>
+                          </div>
+                        )}
+                        {width && (
+                          <div>
+                            <h4 className="font-medium text-foreground mb-1">Width</h4>
+                            <p className="text-muted-foreground">{width}</p>
+                          </div>
+                        )}
+                        {weight && (
+                          <div>
+                            <h4 className="font-medium text-foreground mb-1">Weight</h4>
+                            <p className="text-muted-foreground">{weight}</p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             )}
 

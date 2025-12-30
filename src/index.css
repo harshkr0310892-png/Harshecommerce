@@ -1338,6 +1338,16 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Premium tab/content transition (subtle blur + lift) */
+@keyframes tab-swap {
+  from { opacity: 0; transform: translateY(6px); filter: blur(6px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0px); }
+}
+
+.tab-swap {
+  animation: tab-swap 55ms var(--transition-spring) both;
+}
+
 @keyframes fade-in-down {
   from { opacity: 0; transform: translateY(-20px); }
   to { opacity: 1; transform: translateY(0); }

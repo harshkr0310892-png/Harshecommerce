@@ -26,7 +26,7 @@ export function Layout({ children, showHeader = true, showFooter = true }: Layou
   const shouldShowFooter = showFooter && !hideFooterPaths.includes(location.pathname) && !location.pathname.startsWith('/product/');
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-background app-bg">
       {showHeader && <Header />}
       <main className="flex-1">
         {children}
