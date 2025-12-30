@@ -40,6 +40,8 @@ export default function ProductDetail() {
   const [tabAnimKey, setTabAnimKey] = useState(0);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
+  const [sellerExpanded, setSellerExpanded] = useState(false);
+  const [sellerVisible, setSellerVisible] = useState(false);
   const imageRef = useRef<HTMLDivElement>(null);
   const tabsRef = useRef<HTMLDivElement>(null);
   const fullscreenRef = useRef<HTMLDivElement>(null);
@@ -140,6 +142,16 @@ export default function ProductDetail() {
   const brand_logo_url = (product as any)?.brand_logo_url || null;
   const seller_name = (product as any)?.seller_name || null;
   const seller_description = (product as any)?.seller_description || null;
+  const sellerShortDesc = seller_description && seller_description.length > 180 && !sellerExpanded 
+    ? seller_description.slice(0, 180) + "…" 
+    : seller_description;
+
+  useEffect(() => {
+    if (seller_name) {
+      const t = setTimeout(() => setSellerVisible(true), 50);
+      return () => clearTimeout(t);
+    }
+  }, [seller_name]);
 
   const handleVariantChange = (variant: any, attributeName: string, valueName: string) => {
     if (variant) {
@@ -1007,18 +1019,67 @@ export default function ProductDetail() {
                 </div>
               </div>
               {seller_name && (
-                <div className="mt-6 md:mt-8 p-4 md:p-5 bg-muted/30 rounded-lg border border-border">
-                  <h4 className="font-display text-xl md:text-2xl font-semibold mb-2">Seller</h4>
-                  <p className="text-lg md:text-xl leading-snug">
-                    <span className="font-semibold text-muted-foreground">Seller - </span>
-                    <span className="text-foreground font-semibold">{seller_name}</span>
-                  </p>
-                  {seller_description && (
-                    <p className="text-base md:text-lg mt-1 leading-relaxed">
-                      <span className="font-semibold text-muted-foreground">Description - </span>
-                      <span className="text-foreground">{seller_description}</span>
-                    </p>
+                <div
+                  className={cn(
+                    "mt-6 md:mt-8 group relative p-5 md:p-6 rounded-xl border transition-all duration-500 bg-gradient-to-br from-muted/40 to-background",
+                    sellerVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2",
+                    "hover:shadow-xl hover:-translate-y-0.5 border-border hover:border-primary/40"
                   )}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-primary/10 flex items-center justify-center ring-1 ring-primary/20">
+                        <BadgeCheck className="w-6 h-6 md:w-7 md:h-7 text-primary" />
+                      </div>
+                      <div>
+                        <h4 className="font-display text-xl md:text-2xl font-semibold">Seller</h4>
+                        <p className="text-base md:text-lg">
+                          <span className="text-muted-foreground font-medium">Seller • </span>
+                          <span className="text-foreground font-semibold">{seller_name}</span>
+                        </p>
+                      </div>
+                    </div>
+                    {brand && (
+                      <div className="flex items-center gap-2">
+                        {brand_logo_url ? (
+                          <img
+                            src={brand_logo_url}
+                            alt={brand}
+                            className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover border border-border"
+                          />
+                        ) : (
+                          <span className="px-3 py-1 rounded-full text-sm bg-muted text-foreground">{brand}</span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  {seller_description && (
+                    <div className="text-sm md:text-base leading-relaxed text-foreground/90">
+                      <p className="text-black">{sellerShortDesc}</p>
+                      {seller_description.length > 180 && (
+                        <button
+                          onClick={() => setSellerExpanded((v) => !v)}
+                          className="mt-2 text-primary font-medium hover:underline"
+                        >
+                          {sellerExpanded ? "Show less" : "Read more"}
+                        </button>
+                      )}
+                    </div>
+                  )}
+                  <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="flex items-center gap-2 p-3 rounded-lg bg-card border border-border/60 group-hover:shadow-sm transition-all">
+                      <ShieldCheck className="w-5 h-5 text-primary" />
+                      <span className="text-sm font-medium text-muted-foreground">Quality Assured</span>
+                    </div>
+                    <div className="flex items-center gap-2 p-3 rounded-lg bg-card border border-border/60 group-hover:shadow-sm transition-all">
+                      <ShoppingBag className="w-5 h-5 text-primary" />
+                      <span className="text-sm font-medium text-muted-foreground">Secure Checkout</span>
+                    </div>
+                    <div className="flex items-center gap-2 p-3 rounded-lg bg-card border border-border/60 group-hover:shadow-sm transition-all">
+                      <RotateCcw className="w-5 h-5 text-primary" />
+                      <span className="text-sm font-medium text-muted-foreground">7-Day Return</span>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
